@@ -15,7 +15,7 @@ post '/do-stream', provides: 'json' do
   body = JSON.parse request.body.read
   validation_result = validate(body)
   if validation_result.nil?
-    stream_back(body['word'], body['color'], body['channel'])
+    stream_back(body)
     json body
   else
     status 400
@@ -35,9 +35,9 @@ def validate input
   end
 end
 
-def stream_back(word, color, channel)
-  Pusher.trigger(channel, 'word', {
-      word: word, color: color
+def stream_back(body)
+  Pusher.trigger(body['channel'], 'word', {
+      word: body['word'], color: body['color'], last: body['last']
   })
 end
 
